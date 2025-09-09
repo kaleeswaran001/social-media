@@ -1,0 +1,724 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore - Discover amazing posts from the community">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" 
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" 
+          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" 
+          crossorigin="anonymous">
+    
+    <title>Explore - Social Media</title>
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+    
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --sidebar-bg: #f8f9fa;
+            --border-color: #dee2e6;
+            --text-muted: #6c757d;
+            --hover-bg: #e9ecef;
+            --overlay-bg: rgba(0, 0, 0, 0.7);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fafafa;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: var(--sidebar-bg);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .profile-pic {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center center;
+            border: 3px solid var(--primary-color);
+            transition: transform 0.2s ease;
+        }
+
+        .profile-pic:hover {
+            transform: scale(1.05);
+        }
+
+        .username-link {
+            color: #333;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .username-link:hover {
+            color: var(--primary-color);
+        }
+
+        /* Navigation Styles */
+        .nav-menu {
+            padding: 1rem 0;
+        }
+
+        .nav-menu .nav-link {
+            color: #333;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            margin: 0.25rem 1rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .nav-menu .nav-link:hover {
+            background-color: var(--hover-bg);
+            color: var(--primary-color);
+            transform: translateX(5px);
+        }
+
+        .nav-menu .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .nav-menu .nav-link i {
+            width: 20px;
+            margin-right: 0.75rem;
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .page-title {
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-muted);
+            margin-bottom: 0;
+        }
+
+        /* Explore Grid Styles */
+        .explore-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            padding: 0;
+        }
+
+        .post-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .post-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .post-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center center;
+            transition: transform 0.3s ease;
+        }
+
+        .post-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--overlay-bg);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .post-item:hover .post-overlay {
+            opacity: 1;
+        }
+
+        .post-item:hover .post-image {
+            transform: scale(1.1);
+        }
+
+        .overlay-content {
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .post-item:hover .overlay-content {
+            transform: translateY(0);
+        }
+
+        .post-author {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 0.75rem;
+            display: inline-block;
+            transition: color 0.2s ease;
+        }
+
+        .post-author:hover {
+            color: var(--primary-color);
+        }
+
+        .post-caption {
+            font-size: 0.95rem;
+            line-height: 1.4;
+            margin: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .overlay-stats {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .post-item:hover .overlay-stats {
+            opacity: 1;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Mobile Toggle Button */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Loading Animation */
+        .loading-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .loading-item {
+            aspect-ratio: 1;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+            border-radius: 12px;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .explore-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 250px;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .explore-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 0.5rem;
+            }
+
+            .post-overlay {
+                padding: 1rem;
+            }
+
+            .post-author {
+                font-size: 1rem;
+            }
+
+            .post-caption {
+                font-size: 0.85rem;
+                -webkit-line-clamp: 2;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .explore-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Sidebar backdrop */
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar-backdrop.show {
+                display: block;
+            }
+        }
+
+        /* Accessibility */
+        .post-item:focus {
+            outline: 3px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mobile Toggle Button -->
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Toggle Navigation">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Backdrop -->
+    <div class="sidebar-backdrop" onclick="toggleSidebar()"></div>
+
+    <div class="container-fluid p-0">
+        <div class="row g-0">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 sidebar" id="sidebar" role="navigation" aria-label="Main Navigation">
+                <div class="sidebar-header">
+                    <img src="{{profile.profileimg.url}}" alt="{{user}}'s Profile Picture" class="profile-pic">
+                    <h4 class="mt-3 mb-0">
+                        <a href="/profile/{{user}}" class="username-link">@{{user}}</a>
+                    </h4>
+                </div>
+                
+                <ul class="nav flex-column nav-menu" role="menubar">
+                    <li class="nav-item" role="none">
+                        <a class="nav-link" href="/" role="menuitem">
+                            <i class="fas fa-home" aria-hidden="true"></i> 
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a class="nav-link active" href="/explore" role="menuitem" aria-current="page">
+                            <i class="fas fa-compass" aria-hidden="true"></i> 
+                            <span>Explore</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#searchModal" role="menuitem">
+                            <i class="fas fa-search" aria-hidden="true"></i> 
+                            <span>Search</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#createPostModal" role="menuitem">
+                            <i class="fas fa-plus-circle" aria-hidden="true"></i> 
+                            <span>Create Post</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a class="nav-link" href="/profile/{{profile.user}}" role="menuitem">
+                            <i class="fas fa-user" aria-hidden="true"></i> 
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a class="nav-link" href="/logoutt" role="menuitem">
+                            <i class="fas fa-sign-out-alt" aria-hidden="true"></i> 
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 col-lg-10 main-content" role="main">
+                <!-- Include Modals -->
+                {% include "modal.html" %}
+                {% include "search.html" %}
+
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1 class="page-title">Explore</h1>
+                    <p class="page-subtitle">Discover amazing posts from the community</p>
+                </div>
+
+                <!-- Explore Grid -->
+                <div class="explore-container" id="exploreContainer">
+                    {% if post %}
+                    <div class="explore-grid" id="exploreGrid">
+                        {% for pos in post %}
+                        <article class="post-item" 
+                                 tabindex="0" 
+                                 data-post-id="{{pos.id}}"
+                                 onclick="viewPost('{{pos.id}}')"
+                                 onkeypress="handleKeyPress(event, '{{pos.id}}')"
+                                 role="button"
+                                 aria-label="View post by @{{pos.user}}">
+                            
+                            <img src="{{pos.image.url}}" 
+                                 alt="Post by @{{pos.user}}" 
+                                 class="post-image" 
+                                 loading="lazy">
+                            
+                            <div class="post-overlay">
+                                <div class="overlay-stats">
+                                    {% if pos.no_of_likes %}
+                                    <div class="stat-item">
+                                        <i class="fas fa-heart" aria-hidden="true"></i>
+                                        <span>{{pos.no_of_likes}}</span>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if pos.comments_count %}
+                                    <div class="stat-item">
+                                        <i class="fas fa-comment" aria-hidden="true"></i>
+                                        <span>{{pos.comments_count}}</span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="overlay-content">
+                                    <a href="/profile/{{pos.user}}" 
+                                       class="post-author"
+                                       onclick="event.stopPropagation()">
+                                       @{{pos.user}}
+                                    </a>
+                                    
+                                    {% if pos.caption %}
+                                    <p class="post-caption">{{pos.caption}}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </article>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-compass"></i>
+                        <h3>No posts to explore yet</h3>
+                        <p>Be the first to share something amazing!</p>
+                        <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                            Create Your First Post
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Loading State (hidden by default) -->
+                <div class="loading-grid d-none" id="loadingGrid">
+                    {% for i in "123456789" %}
+                    <div class="loading-item"></div>
+                    {% endfor %}
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/app.js'%}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" 
+            crossorigin="anonymous"></script>
+    
+    <script>
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.querySelector('.sidebar-backdrop');
+            
+            sidebar.classList.toggle('show');
+            backdrop.classList.toggle('show');
+        }
+
+        // View post function
+        function viewPost(postId) {
+            // Navigate to individual post page or open modal
+            window.location.href = `/post/${postId}/`;
+        }
+
+        // Handle keyboard navigation for post items
+        function handleKeyPress(event, postId) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                viewPost(postId);
+            }
+        }
+
+        // Lazy loading with intersection observer
+        if ('IntersectionObserver' in window) {
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        if (img.dataset.src) {
+                            img.src = img.dataset.src;
+                            img.removeAttribute('data-src');
+                        }
+                        img.classList.add('loaded');
+                        observer.unobserve(img);
+                    }
+                });
+            });
+
+            document.querySelectorAll('.post-image').forEach(img => {
+                imageObserver.observe(img);
+            });
+        }
+
+        // Infinite scroll functionality
+        let loading = false;
+        let page = 1;
+
+        function loadMorePosts() {
+            if (loading) return;
+            
+            loading = true;
+            const loadingGrid = document.getElementById('loadingGrid');
+            const exploreGrid = document.getElementById('exploreGrid');
+            
+            // Show loading state
+            loadingGrid.classList.remove('d-none');
+            
+            // Simulate API call (replace with actual fetch)
+            fetch(`/api/explore/?page=${page + 1}`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.posts && data.posts.length > 0) {
+                    // Add new posts to grid
+                    data.posts.forEach(post => {
+                        const postElement = createPostElement(post);
+                        exploreGrid.appendChild(postElement);
+                    });
+                    page++;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading more posts:', error);
+            })
+            .finally(() => {
+                loading = false;
+                loadingGrid.classList.add('d-none');
+            });
+        }
+
+        // Create post element (helper function)
+        function createPostElement(post) {
+            const article = document.createElement('article');
+            article.className = 'post-item';
+            article.setAttribute('tabindex', '0');
+            article.setAttribute('data-post-id', post.id);
+            article.setAttribute('role', 'button');
+            article.setAttribute('aria-label', `View post by @${post.user}`);
+            article.onclick = () => viewPost(post.id);
+            article.onkeypress = (e) => handleKeyPress(e, post.id);
+            
+            article.innerHTML = `
+                <img src="${post.image_url}" 
+                     alt="Post by @${post.user}" 
+                     class="post-image" 
+                     loading="lazy">
+                
+                <div class="post-overlay">
+                    <div class="overlay-stats">
+                        ${post.likes_count ? `
+                            <div class="stat-item">
+                                <i class="fas fa-heart" aria-hidden="true"></i>
+                                <span>${post.likes_count}</span>
+                            </div>
+                        ` : ''}
+                        ${post.comments_count ? `
+                            <div class="stat-item">
+                                <i class="fas fa-comment" aria-hidden="true"></i>
+                                <span>${post.comments_count}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="overlay-content">
+                        <a href="/profile/${post.user}" 
+                           class="post-author"
+                           onclick="event.stopPropagation()">
+                           @${post.user}
+                        </a>
+                        ${post.caption ? `<p class="post-caption">${post.caption}</p>` : ''}
+                    </div>
+                </div>
+            `;
+            
+            return article;
+        }
+
+        // Scroll event for infinite loading
+        window.addEventListener('scroll', () => {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1000) {
+                loadMorePosts();
+            }
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (event) => {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !toggle.contains(event.target) && 
+                sidebar.classList.contains('show')) {
+                toggleSidebar();
+            }
+        });
+
+        // Handle keyboard navigation for sidebar
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                const sidebar = document.getElementById('sidebar');
+                if (sidebar.classList.contains('show')) {
+                    toggleSidebar();
+                }
+            }
+        });
+
+        // Grid layout optimization for different screen sizes
+        function optimizeGridLayout() {
+            const grid = document.getElementById('exploreGrid');
+            const containerWidth = grid.offsetWidth;
+            const minItemWidth = window.innerWidth <= 480 ? 150 : window.innerWidth <= 768 ? 150 : 200;
+            const gap = window.innerWidth <= 768 ? 8 : 16;
+            
+            const itemsPerRow = Math.floor((containerWidth + gap) / (minItemWidth + gap));
+            const itemWidth = (containerWidth - (gap * (itemsPerRow - 1))) / itemsPerRow;
+            
+            document.documentElement.style.setProperty('--grid-item-width', `${itemWidth}px`);
+        }
+
+        // Optimize on load and resize
+        window.addEventListener('load', optimizeGridLayout);
+        window.addEventListener('resize', optimizeGridLayout);
+    </script>
+</body>
+
+</html>

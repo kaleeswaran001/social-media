@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignUp - Advanced UI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/cb792c0850.js" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --success-color: #48bb78;
+            --error-color: #f56565;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            background: var(--primary-gradient);
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .shape:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            top: 70%;
+            right: 10%;
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            animation-delay: -5s;
+        }
+
+        .shape:nth-child(3) {
+            bottom: 20%;
+            left: 15%;
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.25);
+            transform: rotate(45deg);
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-30px) rotate(120deg); }
+            66% { transform: translateY(20px) rotate(240deg); }
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 
+                0 8px 32px 0 rgba(31, 38, 135, 0.37),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        }
+
+        /* Form Styling */
+        .form-container {
+            padding: 3rem 2.5rem;
+        }
+
+        .form-title {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .form-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--secondary-gradient);
+            border-radius: 2px;
+        }
+
+        /* Input Groups */
+        .input-group-modern {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .input-modern {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .input-modern::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .input-modern:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .input-group-modern:focus-within .input-icon {
+            color: #667eea;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* Password Strength Indicator */
+        .password-strength {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .strength-weak { background: #f56565; width: 25%; }
+        .strength-fair { background: #ed8936; width: 50%; }
+        .strength-good { background: #38b2ac; width: 75%; }
+        .strength-strong { background: #48bb78; width: 100%; }
+
+        /* Button */
+        .btn-modern {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: var(--secondary-gradient);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .btn-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-modern:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(245, 87, 108, 0.3);
+        }
+
+        .btn-modern:hover::before {
+            left: 100%;
+        }
+
+        .btn-modern:active {
+            transform: translateY(-1px);
+        }
+
+        /* Alert */
+        .alert-modern {
+            background: rgba(245, 101, 101, 0.1);
+            border: 1px solid rgba(245, 101, 101, 0.2);
+            border-radius: 12px;
+            color: #fed7d7;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Login Link */
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .login-link a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #667eea;
+            transition: width 0.3s ease;
+        }
+
+        .login-link a:hover::after {
+            width: 100%;
+        }
+
+        /* Image Container */
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+        }
+
+        .image-container img {
+            transition: transform 0.3s ease;
+            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.2));
+        }
+
+        .image-container:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 2rem 1.5rem;
+            }
+            
+            .form-title {
+                font-size: 2rem;
+            }
+            
+            .image-container {
+                margin-bottom: 2rem;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Success checkmark animation */
+        .success-checkmark {
+            display: none;
+            width: 20px;
+            height: 20px;
+        }
+
+        .checkmark {
+            stroke-dasharray: 20;
+            stroke-dashoffset: 20;
+            animation: checkmark 0.3s ease-in-out forwards;
+        }
+
+        @keyframes checkmark {
+            to { stroke-dashoffset: 0; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="animated-bg">
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+    </div>
+
+    <div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center py-4">
+        <div class="row w-100 max-width-1200">
+            <div class="col-12">
+                <div class="glass-card">
+                    <div class="row g-0">
+                        <div class="col-lg-6 order-2 order-lg-1">
+                            <div class="form-container">
+                                <h1 class="form-title">Create Account</h1>
+
+                                <!-- Alert for invalid input -->
+                                <div id="alertContainer">
+                                    <!-- Django template for invalid alert -->
+                                    {% if invalid %}
+                                    <div class="alert-modern">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        {{ invalid }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <form class="signup-form" method="post">
+                                    {% csrf_token %}
+                                    
+                                    <div class="input-group-modern">
+                                        <i class="fas fa-user input-icon"></i>
+                                        <input type="text" 
+                                               id="fullName" 
+                                               name="fnm" 
+                                               class="input-modern" 
+                                               placeholder="Full Name" 
+                                               required>
+                                    </div>
+
+                                    <div class="input-group-modern">
+                                        <i class="fas fa-envelope input-icon"></i>
+                                        <input type="email" 
+                                               id="email" 
+                                               name="emailid" 
+                                               class="input-modern" 
+                                               placeholder="Email Address" 
+                                               required>
+                                    </div>
+
+                                    <div class="input-group-modern">
+                                        <i class="fas fa-lock input-icon"></i>
+                                        <input type="password" 
+                                               id="password" 
+                                               name="pwd" 
+                                               class="input-modern" 
+                                               placeholder="Password" 
+                                               required>
+                                        <div class="password-strength">
+                                            <div class="strength-fill" id="strengthFill"></div>
+                                        </div>
+                                        <small id="passwordHelp" class="text-white-50 mt-2 d-block">
+                                            Use 8+ characters with a mix of letters, numbers & symbols
+                                        </small>
+                                    </div>
+
+                                    <button type="submit" class="btn-modern" id="submitBtn">
+                                        <span class="btn-text">Create Account</span>
+                                        <div class="loading" style="display: none;"></div>
+                                        <svg class="success-checkmark" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path class="checkmark" d="m6 10 2 2 6-6"/>
+                                        </svg>
+                                    </button>
+
+                                    <div class="login-link">
+                                        Already have an account? 
+                                        <a href="/loginn">Sign In</a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6 order-1 order-lg-2 d-flex align-items-center justify-content-center p-4">
+                            <div class="image-container">
+                                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
+                                     class="img-fluid" 
+                                     alt="Welcome illustration"
+                                     style="max-height: 500px; object-fit: contain;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Password strength checker
+        const passwordInput = document.getElementById('password');
+        const strengthFill = document.getElementById('strengthFill');
+        const passwordHelp = document.getElementById('passwordHelp');
+
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            const strength = checkPasswordStrength(password);
+            
+            strengthFill.className = 'strength-fill strength-' + strength.level;
+            passwordHelp.textContent = strength.message;
+            passwordHelp.style.color = strength.color;
+        });
+
+        function checkPasswordStrength(password) {
+            let score = 0;
+            let message = 'Enter a password';
+            let level = '';
+            let color = 'rgba(255, 255, 255, 0.5)';
+
+            if (password.length === 0) {
+                return { level: '', message, color };
+            }
+
+            // Length check
+            if (password.length >= 8) score++;
+            if (password.length >= 12) score++;
+
+            // Character variety checks
+            if (/[a-z]/.test(password)) score++;
+            if (/[A-Z]/.test(password)) score++;
+            if (/[0-9]/.test(password)) score++;
+            if (/[^A-Za-z0-9]/.test(password)) score++;
+
+            // Determine strength
+            if (score < 3) {
+                level = 'weak';
+                message = 'Weak password';
+                color = '#f56565';
+            } else if (score < 4) {
+                level = 'fair';
+                message = 'Fair password';
+                color = '#ed8936';
+            } else if (score < 6) {
+                level = 'good';
+                message = 'Good password';
+                color = '#38b2ac';
+            } else {
+                level = 'strong';
+                message = 'Strong password';
+                color = '#48bb78';
+            }
+
+            return { level, message, color };
+        }
+
+        // Form submission with loading state
+        const form = document.querySelector('.signup-form');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const loading = submitBtn.querySelector('.loading');
+        const checkmark = submitBtn.querySelector('.success-checkmark');
+
+        form.addEventListener('submit', function(e) {
+            // Show loading state
+            btnText.style.opacity = '0';
+            loading.style.display = 'inline-block';
+            submitBtn.disabled = true;
+            
+            // Simulate form processing (remove this in production)
+            // The form will actually submit to Django
+        });
+
+        // Input animations and validation
+        document.querySelectorAll('.input-modern').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+
+            input.addEventListener('blur', function() {
+                if (!this.value) {
+                    this.parentElement.classList.remove('focused');
+                }
+            });
+
+            // Real-time validation
+            input.addEventListener('input', function() {
+                if (this.validity.valid) {
+                    this.style.borderColor = 'rgba(72, 187, 120, 0.5)';
+                } else if (this.value) {
+                    this.style.borderColor = 'rgba(245, 101, 101, 0.5)';
+                } else {
+                    this.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                }
+            });
+        });
+
+        // Smooth scrolling and animations on load
+        window.addEventListener('load', function() {
+            document.querySelector('.glass-card').style.animation = 'slideIn 0.6s ease';
+        });
+
+        // Particle interaction
+        document.addEventListener('mousemove', function(e) {
+            const shapes = document.querySelectorAll('.shape');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+
+            shapes.forEach((shape, index) => {
+                const speed = (index + 1) * 2;
+                const xMove = (x - 0.5) * speed;
+                const yMove = (y - 0.5) * speed;
+                
+                shape.style.transform = `translate(${xMove}px, ${yMove}px) rotate(${index * 60}deg)`;
+            });
+        });
+    </script>
+</body>
+
+</html>
